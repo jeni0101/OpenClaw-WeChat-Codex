@@ -1,0 +1,10 @@
+---
+version: 2
+projects:
+  example:
+    path: /srv/wechat-clawbot/projects/example
+    sourceMode: clean-git
+    description: Example read-only project; replace this entry with your own allowlisted project.
+    capabilities: [status, develop]
+    status: []
+    actions: {}

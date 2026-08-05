@@ -1,0 +1,14 @@
+[Unit]
+Description=Read-only stable path for the managed Codex runtime
+Requires=opt-WeChat\x2dOpen\x20in-data.mount
+After=opt-WeChat\x2dOpen\x20in-data.mount
+Before=wechat-clawbot-gateway.service
+
+[Mount]
+What=/opt/WeChat-Open in/data/runtime/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl
+Where=/usr/local/libexec/wechat-clawbot-codex
+Type=none
+Options=bind,ro,nosuid,nodev
+
+[Install]
+WantedBy=multi-user.target

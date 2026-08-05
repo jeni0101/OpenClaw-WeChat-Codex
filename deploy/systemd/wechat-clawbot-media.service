@@ -1,0 +1,50 @@
+[Unit]
+Description=WeChat ClawBot safe native-media inspection broker
+RequiresMountsFor=/opt/WeChat-Open\x20in/data
+After=network-online.target wechat-clawbot-cdn-tunnel.service opt-WeChat\x2dOpen\x20in-data.mount
+Wants=network-online.target wechat-clawbot-cdn-tunnel.service
+
+[Service]
+Type=simple
+User=wechat-clawbot
+Group=wechat-clawbot
+Slice=wechat-clawbot.slice
+WorkingDirectory=/opt/WeChat-Open in
+Environment="WECHAT_CLAWBOT_ROOT=/opt/WeChat-Open in"
+Environment="WECHAT_CLAWBOT_DATA=/opt/WeChat-Open in/data"
+Environment="WECHAT_MEDIA_SOCKET=/opt/WeChat-Open in/data/run/media-bridge.sock"
+EnvironmentFile=/etc/wechat-clawbot/runtime.env
+Environment=WEIXIN_CDN_PRIMARY_METHOD=POST
+Environment=WEIXIN_CDN_PRIMARY_URL_SOURCE=full
+Environment=WEIXIN_CDN_SOCKS_PROXY=socks5h://127.0.0.1:19080
+Environment=NODE_OPTIONS=--max-old-space-size=160
+LoadCredentialEncrypted=broker-token:/etc/credstore.encrypted/wechat-clawbot-broker-token.cred
+LoadCredentialEncrypted=owner-wechat-id:/etc/credstore.encrypted/wechat-clawbot-owner-wechat-id.cred
+ExecStart="/opt/WeChat-Open in/data/node/bin/node" "/opt/WeChat-Open in/dist/scripts/media-bridge.js"
+Restart=on-failure
+RestartSec=5s
+TimeoutStopSec=30s
+UMask=0027
+MemoryAccounting=yes
+MemoryHigh=192M
+MemoryMax=256M
+NoNewPrivileges=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectSystem=strict
+ProtectHome=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+ProtectClock=yes
+RestrictSUIDSGID=yes
+LockPersonality=yes
+RestrictRealtime=yes
+CapabilityBoundingSet=
+ReadWritePaths="/opt/WeChat-Open in/data"
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+SystemCallArchitectures=native
+OOMPolicy=continue
+
+[Install]
+WantedBy=multi-user.target

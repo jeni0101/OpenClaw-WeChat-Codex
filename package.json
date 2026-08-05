@@ -1,0 +1,39 @@
+{
+  "name": "wechat-clawbot",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24.15.0 <25"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json && npm run build:plugins",
+    "build:plugin": "npm run build:plugins",
+    "build:plugins": "tsc -p plugins/project-ops/tsconfig.json && tsc -p plugins/wechat-media-bridge/tsconfig.json",
+    "backup:retry": "node dist/scripts/backup.js --retry-pending",
+    "migration:bundle": "node dist/scripts/migration-bundle.js",
+    "migration:preflight": "sudo bash deploy/preflight-singapore.sh --source",
+    "migration:verify": "sudo node dist/scripts/verify-migration-bundle.js",
+    "prune:platform": "node dist/scripts/prune-platform-packages.js",
+    "diagnose:weixin-media": "node dist/scripts/diagnose-weixin-media.js",
+    "diagnose:weixin-support": "node dist/scripts/build-weixin-support-bundle.js",
+    "test": "vitest run --configLoader runner",
+    "test:watch": "vitest --configLoader runner",
+    "secret:scan": "python3 scripts/secret-scan.py",
+    "check": "npm run secret:scan && npm run build && npm test"
+  },
+  "dependencies": {
+    "@openclaw/codex": "2026.7.1-1",
+    "@tencent-weixin/openclaw-weixin": "2.4.6",
+    "@openai/codex": "0.144.4",
+    "cos-nodejs-sdk-v5": "3.0.0",
+    "openclaw": "2026.7.1-2",
+    "typebox": "1.3.6",
+    "yaml": "2.9.0"
+  },
+  "devDependencies": {
+    "@types/node": "24.10.1",
+    "typescript": "7.0.2",
+    "vitest": "4.1.10"
+  }
+}

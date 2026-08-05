@@ -1,0 +1,512 @@
+{
+  "gateway": {
+    "mode": "local",
+    "port": 18789,
+    "bind": "loopback",
+    "auth": {
+      "mode": "token",
+      "rateLimit": {
+        "maxAttempts": 6,
+        "windowMs": 60000,
+        "lockoutMs": 300000,
+        "exemptLoopback": false
+      }
+    },
+    "tailscale": {
+      "mode": "off",
+      "resetOnExit": false
+    },
+    "controlUi": {
+      "enabled": true,
+      "allowedOrigins": [
+        "http://127.0.0.1:18789",
+        "http://localhost:18789"
+      ],
+      "allowInsecureAuth": false,
+      "dangerouslyDisableDeviceAuth": false,
+      "dangerouslyAllowHostHeaderOriginFallback": false
+    },
+    "terminal": {
+      "enabled": false
+    },
+    "nodes": {
+      "allowCommands": [],
+      "denyCommands": [
+        "system.run"
+      ]
+    }
+  },
+  "agents": {
+    "defaults": {
+      "workspace": "/opt/WeChat-Open in/data/workspace",
+      "model": {
+        "primary": "openai/gpt-5.6-sol",
+        "fallbacks": [
+          "openai/gpt-5.5"
+        ]
+      },
+      "models": {
+        "openai/gpt-5.6-sol": {
+          "alias": "GPT-5.6 SOL"
+        },
+        "openai/gpt-5.5": {
+          "alias": "GPT-5.5 fallback"
+        }
+      },
+      "imageModel": {
+        "primary": "openai/gpt-5.6-sol",
+        "fallbacks": [
+          "openai/gpt-5.5"
+        ]
+      },
+      "pdfModel": {
+        "primary": "openai/gpt-5.6-sol",
+        "fallbacks": [
+          "openai/gpt-5.5"
+        ]
+      },
+      "pdfMaxBytesMb": 25,
+      "pdfMaxPages": 50,
+      "mediaMaxMb": 50,
+      "contextTokens": 128000,
+      "timeoutSeconds": 900,
+      "maxConcurrent": 1,
+      "memorySearch": {
+        "enabled": true,
+        "provider": "none",
+        "fallback": "none",
+        "sources": [
+          "memory",
+          "sessions"
+        ],
+        "experimental": {
+          "sessionMemory": true
+        },
+        "sync": {
+          "watch": true,
+          "onSessionStart": true,
+          "onSearch": true,
+          "sessions": {
+            "deltaBytes": 50000,
+            "deltaMessages": 25
+          }
+        },
+        "cache": {
+          "enabled": true,
+          "maxEntries": 20000
+        },
+        "store": {
+          "vector": {
+            "enabled": false
+          },
+          "fts": {
+            "tokenizer": "trigram"
+          }
+        }
+      },
+      "compaction": {
+        "mode": "safeguard",
+        "reserveTokensFloor": 16000,
+        "keepRecentTokens": 16000,
+        "recentTurnsPreserve": 3,
+        "maxHistoryShare": 0.7,
+        "qualityGuard": {
+          "enabled": true,
+          "maxRetries": 1
+        },
+        "midTurnPrecheck": {
+          "enabled": true
+        },
+        "postIndexSync": "await",
+        "truncateAfterCompaction": true,
+        "maxActiveTranscriptBytes": "20mb",
+        "memoryFlush": {
+          "enabled": true,
+          "softThresholdTokens": 8000,
+          "forceFlushTranscriptBytes": "2mb",
+          "systemPrompt": "上下文即将压缩。仅把长期有效且必要的信息写入 MEMORY.md 或 memory/YYYY-MM-DD.md；不要保存凭据、token、密钥或完整聊天正文。",
+          "prompt": "提炼持久记忆；如无内容，严格回复 NO_REPLY。"
+        }
+      },
+      "contextPruning": {
+        "mode": "cache-ttl",
+        "ttl": "15m",
+        "keepLastAssistants": 3,
+        "softTrimRatio": 0.3,
+        "hardClearRatio": 0.5,
+        "minPrunableToolChars": 20000,
+        "softTrim": {
+          "maxChars": 4000,
+          "headChars": 1500,
+          "tailChars": 1500
+        },
+        "hardClear": {
+          "enabled": true,
+          "placeholder": "[旧工具结果已按保留策略清理]"
+        }
+      },
+      "heartbeat": {
+        "every": "0m"
+      },
+      "imageGenerationModel": {
+        "primary": "openai/gpt-image-2",
+        "timeoutMs": 180000,
+        "fallbacks": [
+          "openai/gpt-image-1.5"
+        ]
+      }
+    },
+    "list": [
+      {
+        "id": "main",
+        "default": true,
+        "skills": [],
+        "identity": {
+          "name": "WeChat ClawBot",
+          "theme": "谨慎、可审计的云端任务助理",
+          "emoji": "🦞"
+        }
+      }
+    ]
+  },
+  "session": {
+    "scope": "per-sender",
+    "dmScope": "per-account-channel-peer",
+    "maintenance": {
+      "mode": "enforce",
+      "pruneAfter": "30d",
+      "maxEntries": 500,
+      "resetArchiveRetention": "30d",
+      "maxDiskBytes": "1500mb",
+      "highWaterBytes": "1200mb"
+    },
+    "sendPolicy": {
+      "rules": [
+        {
+          "action": "deny",
+          "match": {
+            "chatType": "group"
+          }
+        },
+        {
+          "action": "deny",
+          "match": {
+            "channel": "webchat"
+          }
+        }
+      ],
+      "default": "allow"
+    }
+  },
+  "cron": {
+    "enabled": true,
+    "maxConcurrentRuns": 1,
+    "sessionRetention": "24h",
+    "runLog": {
+      "maxBytes": "2mb",
+      "keepLines": 1000
+    }
+  },
+  "channels": {
+    "defaults": {
+      "groupPolicy": "disabled"
+    },
+    "openclaw-weixin": {
+      "enabled": true,
+      "botAgent": "WeChatClawBot/0.1.0",
+      "replyProgressMessages": true,
+      "accounts": {
+        "REPLACE_WITH_WECHAT_ACCOUNT_ID": {
+          "enabled": true
+        }
+      },
+      "defaultAccount": "REPLACE_WITH_WECHAT_ACCOUNT_ID"
+    }
+  },
+  "tools": {
+    "profile": "coding",
+    "alsoAllow": [
+      "group:fs",
+      "memory_search",
+      "memory_get",
+      "cron",
+      "project_list",
+      "project_status",
+      "project_change_prepare",
+      "project_change_apply",
+      "project_change_result",
+      "project_rollback",
+      "session_status",
+      "web_fetch",
+      "web_search",
+      "image_generate",
+      "workfile_extract",
+      "workfile_import_generated_image",
+      "weixin_send_current_attachment"
+    ],
+    "deny": [
+      "exec",
+      "process",
+      "gateway",
+      "nodes",
+      "browser",
+      "canvas",
+      "sessions_spawn",
+      "sessions_send",
+      "message"
+    ],
+    "fs": {
+      "workspaceOnly": true
+    },
+    "elevated": {
+      "enabled": false
+    },
+    "sessions": {
+      "visibility": "agent"
+    },
+    "agentToAgent": {
+      "enabled": false
+    },
+    "web": {
+      "fetch": {
+        "enabled": true,
+        "timeoutSeconds": 30,
+        "cacheTtlMinutes": 15,
+        "maxRedirects": 3,
+        "maxResponseBytes": 2000000,
+        "maxChars": 50000,
+        "maxCharsCap": 100000,
+        "ssrfPolicy": {
+          "allowRfc2544BenchmarkRange": false,
+          "allowIpv6UniqueLocalRange": false
+        }
+      }
+    },
+    "media": {
+      "concurrency": 1,
+      "image": {
+        "enabled": true,
+        "maxBytes": 52428800,
+        "maxChars": 20000,
+        "timeoutSeconds": 180,
+        "scope": {
+          "default": "deny",
+          "rules": [
+            {
+              "action": "allow",
+              "match": {
+                "channel": "openclaw-weixin",
+                "chatType": "direct"
+              }
+            }
+          ]
+        },
+        "models": [
+          {
+            "provider": "openai",
+            "model": "gpt-5.6-sol",
+            "capabilities": [
+              "image"
+            ],
+            "timeoutSeconds": 180
+          },
+          {
+            "provider": "openai",
+            "model": "gpt-5.5",
+            "capabilities": [
+              "image"
+            ],
+            "timeoutSeconds": 180
+          }
+        ]
+      }
+    }
+  },
+  "skills": {
+    "load": {
+      "extraDirs": [
+        "/opt/WeChat-Open in/data/workspace/.openclaw/skills"
+      ]
+    }
+  },
+  "plugins": {
+    "enabled": true,
+    "allow": [
+      "openclaw-weixin",
+      "codex",
+      "project-ops",
+      "openai",
+      "memory-core",
+      "document-extract",
+      "wechat-media-bridge"
+    ],
+    "load": {
+      "paths": [
+        "/opt/WeChat-Open in/plugins/project-ops",
+        "/opt/WeChat-Open in/runtime-plugins/wechat-media-bridge"
+      ]
+    },
+    "entries": {
+      "openclaw-weixin": {
+        "enabled": true
+      },
+      "codex": {
+        "enabled": true,
+        "config": {
+          "codexDynamicToolsLoading": "direct",
+          "codexDynamicToolsExclude": [
+            "codex_threads"
+          ],
+          "discovery": {
+            "enabled": true,
+            "timeoutMs": 5000
+          },
+          "computerUse": {
+            "enabled": false,
+            "autoInstall": false
+          },
+          "codexPlugins": {
+            "enabled": false,
+            "allow_all_plugins": false,
+            "allow_destructive_actions": false
+          },
+          "appServer": {
+            "mode": "guardian",
+            "command": "/usr/local/libexec/wechat-clawbot-codex/bin/codex",
+            "homeScope": "agent",
+            "approvalPolicy": "never",
+            "sandbox": "workspace-write",
+            "approvalsReviewer": "auto_review",
+            "codeModeOnly": false,
+            "clearEnv": [
+              "OPENAI_API_KEY",
+              "COS_SECRET_ID",
+              "COS_SECRET_KEY",
+              "AWS_ACCESS_KEY_ID",
+              "AWS_SECRET_ACCESS_KEY"
+            ],
+            "defaultWorkspaceDir": "/opt/WeChat-Open in/data/workspace",
+            "networkProxy": {
+              "enabled": true,
+              "profileName": "wechat-clawbot",
+              "baseProfile": "workspace",
+              "mode": "full",
+              "allowUpstreamProxy": true,
+              "allowLocalBinding": false,
+              "domains": {
+                "api.open-meteo.com": "allow",
+                "github.com": "allow",
+                "*.github.com": "allow",
+                "raw.githubusercontent.com": "allow",
+                "objects.githubusercontent.com": "allow",
+                "codeload.github.com": "allow",
+                "registry.npmjs.org": "allow",
+                "npmjs.org": "allow",
+                "*.npmjs.org": "allow",
+                "nodejs.org": "allow",
+                "*.nodejs.org": "allow",
+                "pypi.org": "allow",
+                "*.pypi.org": "allow",
+                "files.pythonhosted.org": "allow",
+                "*.pythonhosted.org": "allow",
+                "api.openai.com": "allow",
+                "auth.openai.com": "allow",
+                "chatgpt.com": "allow",
+                "*.openai.com": "allow",
+                "203.0.113.10": "deny",
+                "169.254.*": "deny",
+                "10.*": "deny",
+                "100.64.*": "deny",
+                "192.168.*": "deny",
+                "172.16.*": "deny",
+                "172.17.*": "deny",
+                "172.18.*": "deny",
+                "172.19.*": "deny",
+                "172.20.*": "deny",
+                "172.21.*": "deny",
+                "172.22.*": "deny",
+                "172.23.*": "deny",
+                "172.24.*": "deny",
+                "172.25.*": "deny",
+                "172.26.*": "deny",
+                "172.27.*": "deny",
+                "172.28.*": "deny",
+                "172.29.*": "deny",
+                "172.30.*": "deny",
+                "172.31.*": "deny",
+                "metadata.google.internal": "deny",
+                "*.internal": "deny",
+                "*.local": "deny",
+                "localhost": "deny",
+                "127.0.0.1": "deny",
+                "0.0.0.0": "deny"
+              }
+            }
+          }
+        }
+      },
+      "project-ops": {
+        "enabled": true,
+        "config": {}
+      },
+      "wechat-media-bridge": {
+        "enabled": true,
+        "config": {
+          "socketPath": "/opt/WeChat-Open in/data/run/media-bridge.sock",
+          "accountId": "REPLACE_WITH_WECHAT_ACCOUNT_ID",
+          "workspaceRoot": "/opt/WeChat-Open in/data/workspace"
+        },
+        "hooks": {
+          "timeoutMs": 45000,
+          "timeouts": {
+            "message_sent": 240000
+          }
+        }
+      },
+      "openai": {
+        "enabled": true
+      },
+      "document-extract": {
+        "enabled": true
+      }
+    },
+    "bundledDiscovery": "allowlist"
+  },
+  "logging": {
+    "level": "warn",
+    "file": "/opt/WeChat-Open in/data/logs/gateway.jsonl",
+    "maxFileBytes": 26214400,
+    "consoleLevel": "warn",
+    "consoleStyle": "json",
+    "redactSensitive": "tools",
+    "redactPatterns": [
+      "(?i)(authorization|cookie|token|secret|password|credential|api[_-]?key)\\s*[=:]\\s*([^\\s,;]+)",
+      "sk-[A-Za-z0-9_-]{12,}",
+      "-----BEGIN [A-Z ]+PRIVATE KEY-----",
+      "(?i)(from|sender(?:id)?|user(?:id)?|account(?:id)?|peer|session(?:id|key)?|traceid|spanid)\\s*[=:]\\s*([^\\s,;]+)",
+      "[A-Za-z0-9_-]{32,}",
+      "(?i)(body|text|prompt|reply|chat)\\s*[=:]\\s*(.+)"
+    ]
+  },
+  "audit": {
+    "enabled": true
+  },
+  "meta": {
+    "lastTouchedVersion": "2026.7.1-2",
+    "lastTouchedAt": "2026-07-26T08:08:18.659Z"
+  },
+  "bindings": [
+    {
+      "match": {
+        "channel": "openclaw-weixin",
+        "accountId": "REPLACE_WITH_WECHAT_ACCOUNT_ID"
+      },
+      "agentId": "main"
+    }
+  ],
+  "commands": {
+    "ownerAllowFrom": [
+      "REPLACE_WITH_WECHAT_OWNER_ID"
+    ]
+  }
+}

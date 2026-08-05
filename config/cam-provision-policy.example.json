@@ -1,0 +1,21 @@
+{
+  "version": "2.0",
+  "statement": [
+    {
+      "effect": "allow",
+      "action": [
+        "name/cos:PutBucket",
+        "name/cos:HeadBucket",
+        "name/cos:GetBucketACL",
+        "name/cos:PutBucketACL",
+        "name/cos:GetBucketEncryption",
+        "name/cos:PutBucketEncryption",
+        "name/cos:GetBucketLifecycle",
+        "name/cos:PutBucketLifecycle"
+      ],
+      "resource": [
+        "qcs::cos:REPLACE_WITH_COS_REGION:uid/REPLACE_WITH_APPID:wechat-clawbot-REPLACE_WITH_APPID/"
+      ]
+    }
+  ]
+}

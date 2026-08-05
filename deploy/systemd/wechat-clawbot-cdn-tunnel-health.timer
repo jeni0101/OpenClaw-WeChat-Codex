@@ -1,0 +1,13 @@
+[Unit]
+Description=Continuously verify the WeChat CDN tunnel data path
+
+[Timer]
+OnBootSec=90s
+OnUnitActiveSec=60s
+AccuracySec=5s
+RandomizedDelaySec=5s
+Persistent=true
+Unit=wechat-clawbot-cdn-tunnel-health.service
+
+[Install]
+WantedBy=timers.target

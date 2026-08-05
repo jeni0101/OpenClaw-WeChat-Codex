@@ -1,0 +1,33 @@
+{
+  "id": "project-ops",
+  "name": "Project Operations",
+  "description": "Owner-bound, approval-gated operations for an explicit project allowlist.",
+  "version": "0.1.0",
+  "activation": {
+    "onStartup": true,
+    "onCommands": [
+      "approve"
+    ]
+  },
+  "commandAliases": [
+    {
+      "name": "approve",
+      "kind": "runtime-slash"
+    }
+  ],
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {}
+  },
+  "contracts": {
+    "tools": [
+      "project_list",
+      "project_status",
+      "project_change_prepare",
+      "project_change_apply",
+      "project_change_result",
+      "project_rollback"
+    ]
+  }
+}

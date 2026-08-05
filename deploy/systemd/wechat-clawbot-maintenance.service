@@ -1,0 +1,26 @@
+[Unit]
+Description=WeChat ClawBot retention and disk-budget maintenance
+RequiresMountsFor=/opt/WeChat-Open\x20in/data
+After=opt-WeChat\x2dOpen\x20in-data.mount
+
+[Service]
+Type=oneshot
+User=root
+Group=wechat-clawbot
+Slice=wechat-clawbot.slice
+WorkingDirectory=/opt/WeChat-Open in
+Environment="WECHAT_CLAWBOT_ROOT=/opt/WeChat-Open in"
+Environment="WECHAT_CLAWBOT_DATA=/opt/WeChat-Open in/data"
+LoadCredentialEncrypted=gateway-token:/etc/credstore.encrypted/wechat-clawbot-gateway-token.cred
+ExecStart="/opt/WeChat-Open in/data/node/bin/node" "/opt/WeChat-Open in/dist/scripts/maintenance.js"
+UMask=0027
+NoNewPrivileges=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectSystem=strict
+ProtectHome=read-only
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+ReadWritePaths="/opt/WeChat-Open in/data" -/srv/wechat-clawbot/projects/example
+RestrictAddressFamilies=AF_UNIX

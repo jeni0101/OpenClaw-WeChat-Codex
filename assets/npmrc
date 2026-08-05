@@ -1,0 +1,4 @@
+cache=/opt/WeChat-Open in/data/cache/npm
+fund=false
+audit=false
+update-notifier=false

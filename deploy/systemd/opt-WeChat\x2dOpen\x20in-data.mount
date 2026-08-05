@@ -1,0 +1,13 @@
+[Unit]
+Description=WeChat ClawBot bounded data volume
+After=local-fs-pre.target
+Before=wechat-clawbot-ops.service wechat-clawbot-gateway.service
+
+[Mount]
+What=/opt/WeChat-Open in/.storage/clawbot-data.img
+Where=/opt/WeChat-Open in/data
+Type=ext4
+Options=loop,nodev,nosuid,noatime
+
+[Install]
+WantedBy=local-fs.target

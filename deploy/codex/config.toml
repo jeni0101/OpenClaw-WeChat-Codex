@@ -1,0 +1,20 @@
+# Managed per-agent Codex permissions for the WeChat assistant.
+# OpenClaw selects this profile by name and adds the scoped network rules from
+# config/openclaw.json at thread start.
+default_permissions = "wechat-clawbot"
+
+[permissions.wechat-clawbot.filesystem]
+":minimal" = "read"
+"/opt/WeChat-Open in/data/state/agents/main/agent/codex-home/skills" = "read"
+glob_scan_max_depth = 6
+
+[permissions.wechat-clawbot.filesystem.":workspace_roots"]
+"." = "write"
+"**/.env" = "deny"
+"**/.env.*" = "deny"
+"**/*.pem" = "deny"
+"**/*.p12" = "deny"
+"**/*.pfx" = "deny"
+"**/*.key" = "deny"
+"**/id_rsa" = "deny"
+"**/id_ed25519" = "deny"

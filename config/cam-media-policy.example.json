@@ -1,0 +1,38 @@
+{
+  "version": "2.0",
+  "statement": [
+    {
+      "effect": "allow",
+      "action": [
+        "name/cos:HeadBucket",
+        "name/cos:GetBucket",
+        "name/cos:ListMultipartUploads"
+      ],
+      "resource": [
+        "qcs::cos:REPLACE_WITH_COS_REGION:uid/REPLACE_WITH_APPID:wechat-clawbot-REPLACE_WITH_APPID/*"
+      ],
+      "condition": {
+        "string_like": {
+          "cos:prefix": ["delivery%2F", "delivery%2F*"]
+        }
+      }
+    },
+    {
+      "effect": "allow",
+      "action": [
+        "name/cos:GetObject",
+        "name/cos:HeadObject",
+        "name/cos:PutObject",
+        "name/cos:DeleteObject",
+        "name/cos:InitiateMultipartUpload",
+        "name/cos:UploadPart",
+        "name/cos:ListParts",
+        "name/cos:CompleteMultipartUpload",
+        "name/cos:AbortMultipartUpload"
+      ],
+      "resource": [
+        "qcs::cos:REPLACE_WITH_COS_REGION:uid/REPLACE_WITH_APPID:wechat-clawbot-REPLACE_WITH_APPID/delivery/*"
+      ]
+    }
+  ]
+}

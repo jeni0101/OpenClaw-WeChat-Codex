@@ -1,0 +1,25 @@
+[Unit]
+Description=Dry-run restore validation for encrypted WeChat ClawBot COS object
+RequiresMountsFor=/opt/WeChat-Open\x20in/data
+After=network-online.target opt-WeChat\x2dOpen\x20in-data.mount
+
+[Service]
+Type=oneshot
+User=root
+Group=wechat-clawbot
+Slice=wechat-clawbot.slice
+WorkingDirectory=/opt/WeChat-Open in
+Environment="WECHAT_CLAWBOT_DATA=/opt/WeChat-Open in/data"
+EnvironmentFile=/etc/wechat-clawbot/runtime.env
+LoadCredentialEncrypted=cos-secret-id:/etc/credstore.encrypted/wechat-clawbot-cos-secret-id.cred
+LoadCredentialEncrypted=cos-secret-key:/etc/credstore.encrypted/wechat-clawbot-cos-secret-key.cred
+LoadCredentialEncrypted=age-key:/etc/credstore.encrypted/wechat-clawbot-age-key.cred
+ExecStart="/opt/WeChat-Open in/data/node/bin/node" "/opt/WeChat-Open in/dist/scripts/restore.js" --dry-run --key %i
+UMask=0077
+NoNewPrivileges=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectSystem=strict
+ProtectHome=yes
+ReadWritePaths="/opt/WeChat-Open in/data"
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6

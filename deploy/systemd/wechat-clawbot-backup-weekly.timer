@@ -1,0 +1,12 @@
+[Unit]
+Description=Weekly encrypted WeChat ClawBot COS backup Sunday 04:30 Asia/Shanghai
+
+[Timer]
+OnCalendar=Sun *-*-* 04:30:00 Asia/Shanghai
+Persistent=true
+RandomizedDelaySec=0
+AccuracySec=1s
+Unit=wechat-clawbot-backup@weekly.service
+
+[Install]
+WantedBy=timers.target

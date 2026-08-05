@@ -1,0 +1,12 @@
+[Unit]
+Description=Aggregate resource limits for WeChat ClawBot
+
+[Slice]
+MemoryAccounting=yes
+MemoryHigh=1280M
+MemoryMax=1536M
+MemorySwapMax=512M
+TasksAccounting=yes
+TasksMax=512
+CPUAccounting=yes
+IOAccounting=yes

@@ -1,0 +1,51 @@
+[Unit]
+Description=OpenClaw Gateway for private WeChat owner
+Requires=wechat-clawbot-ops.service
+Wants=wechat-clawbot-media.service wechat-clawbot-cdn-tunnel.service
+RequiresMountsFor=/opt/WeChat-Open\x20in/data /usr/local/libexec/wechat-clawbot-codex
+After=network-online.target wechat-clawbot-ops.service wechat-clawbot-media.service wechat-clawbot-cdn-tunnel.service opt-WeChat\x2dOpen\x20in-data.mount
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=wechat-clawbot
+Group=wechat-clawbot
+Slice=wechat-clawbot.slice
+WorkingDirectory=/opt/WeChat-Open in
+Environment="WECHAT_CLAWBOT_ROOT=/opt/WeChat-Open in"
+Environment="WECHAT_CLAWBOT_DATA=/opt/WeChat-Open in/data"
+Environment=WEIXIN_CDN_PRIMARY_METHOD=POST
+Environment=WEIXIN_CDN_PRIMARY_URL_SOURCE=full
+Environment=WEIXIN_CDN_SOCKS_PROXY=socks5h://127.0.0.1:19080
+LoadCredentialEncrypted=gateway-token:/etc/credstore.encrypted/wechat-clawbot-gateway-token.cred
+LoadCredentialEncrypted=broker-token:/etc/credstore.encrypted/wechat-clawbot-broker-token.cred
+LoadCredentialEncrypted=owner-wechat-id:/etc/credstore.encrypted/wechat-clawbot-owner-wechat-id.cred
+ExecStart="/opt/WeChat-Open in/data/node/bin/node" "/opt/WeChat-Open in/dist/scripts/launch-gateway.js"
+Restart=on-failure
+RestartSec=5s
+TimeoutStopSec=45s
+UMask=0027
+NoNewPrivileges=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectSystem=strict
+ProtectHome=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+ProtectClock=yes
+RestrictSUIDSGID=yes
+LockPersonality=yes
+RestrictRealtime=yes
+CapabilityBoundingSet=
+ReadWritePaths="/opt/WeChat-Open in/data"
+ReadWritePaths="/opt/WeChat-Open in/config/openclaw.json.last-good"
+# Codex's bubblewrap network namespace needs a NETLINK_ROUTE socket to bring
+# up its private loopback interface. Capabilities remain empty, so this does
+# not grant host network administration or weaken the filesystem sandbox.
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6 AF_NETLINK
+SystemCallArchitectures=native
+OOMPolicy=continue
+
+[Install]
+WantedBy=multi-user.target

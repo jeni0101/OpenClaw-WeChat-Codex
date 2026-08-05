@@ -1,0 +1,25 @@
+[Unit]
+Description=OpenClaw %i security audit with protected Gateway credential
+RequiresMountsFor=/opt/WeChat-Open\x20in/data
+After=opt-WeChat\x2dOpen\x20in-data.mount
+
+[Service]
+Type=oneshot
+User=wechat-clawbot
+Group=wechat-clawbot
+Slice=wechat-clawbot.slice
+WorkingDirectory=/opt/WeChat-Open in
+LoadCredentialEncrypted=gateway-token:/etc/credstore.encrypted/wechat-clawbot-gateway-token.cred
+ExecStart="/opt/WeChat-Open in/data/node/bin/node" "/opt/WeChat-Open in/dist/scripts/openclaw-security-audit.js" --%i
+UMask=0077
+NoNewPrivileges=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectSystem=strict
+ProtectHome=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+CapabilityBoundingSet=
+ReadWritePaths="/opt/WeChat-Open in/data"
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6

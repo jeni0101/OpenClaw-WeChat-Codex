@@ -1,0 +1,14 @@
+[Unit]
+Description=Verify real HTTPS forwarding through the WeChat CDN tunnel
+After=network-online.target wechat-clawbot-cdn-tunnel.service
+
+[Service]
+Type=oneshot
+ExecStart="/opt/WeChat-Open in/deploy/check-cdn-tunnel.sh"
+RuntimeDirectory=wechat-clawbot-cdn-tunnel-health
+RuntimeDirectoryMode=0750
+RuntimeDirectoryPreserve=yes
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectHome=true
+ProtectSystem=strict

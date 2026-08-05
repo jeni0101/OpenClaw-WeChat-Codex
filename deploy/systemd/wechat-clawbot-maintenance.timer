@@ -1,0 +1,12 @@
+[Unit]
+Description=Daily WeChat ClawBot maintenance at 03:30 Asia/Shanghai
+
+[Timer]
+OnCalendar=*-*-* 03:30:00 Asia/Shanghai
+Persistent=true
+RandomizedDelaySec=0
+AccuracySec=1s
+Unit=wechat-clawbot-maintenance.service
+
+[Install]
+WantedBy=timers.target
