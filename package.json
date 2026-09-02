@@ -23,7 +23,7 @@
     "check": "npm run secret:scan && npm run build && npm test"
   },
   "dependencies": {
-    "@openclaw/codex": "2026.7.1-1",
+    "@openclaw/codex": "2026.7.1",
     "@tencent-weixin/openclaw-weixin": "2.4.6",
     "@openai/codex": "0.144.4",
     "cos-nodejs-sdk-v5": "3.0.0",
